@@ -9,6 +9,8 @@ Do not edit any of the code already written.
 import os
 import pandas as pd
 
+from data.basic import people
+
 
 def load_data():
     """
@@ -23,6 +25,25 @@ def load_data():
 
 
 def query(table, name: str = None, occupation: str = None, state: str = None, age: int = None):
+    # I got confused here, was this suppose to find anyone in the dict, or just the oldest DA?
+    found = []
+    for i in table:
+        qualifies = True
+        if name is not None:
+            if i['name'] != name:
+                qualifies = False
+        if occupation is not None:
+            if i['occupation'] != occupation:
+                qualifies = False
+        if state is not None:
+            if i['state'] != state:
+                qualifies = False
+        if age is not None:
+            if i['age'] != age:
+                qualifies = False
+        if qualifies:
+            found.append(i)
+
     """
     Allows a user to query a specified table for any information in the table.
 
@@ -33,10 +54,16 @@ def query(table, name: str = None, occupation: str = None, state: str = None, ag
     :param age:
     :return: records which meet the requested informatiion
     """
-    return
+    return found
+
+
+print(query(people, 'Tyler'))
+print(query(people, None, 'Broker'))
 
 
 def add_person(table, name, occupation: str = None, state: str = None, age: int = None):
+    table.append({'name': name, 'occupation': occupation, 'state': state, 'age': age})
+
     """
     Adds a person to the data table
 
@@ -47,10 +74,22 @@ def add_person(table, name, occupation: str = None, state: str = None, age: int 
     :param age: age o the person
     :return: table with the added person
     """
-    return
+    return table
+
+
+add_person(people, 'Matt Paquette', 'Medical Sales', 'California', 24)
 
 
 def edit_person(table, name, occupation: str = None, state: str = None, age: int = None):
+    for person in table:
+        if person['name'] == name:
+            if occupation is not None:
+                person['occupation'] = occupation
+            if state is not None:
+                person['state'] = state
+            if age is not None:
+                person['age'] = age
+
     """
     edits a person to the data table
 
@@ -61,7 +100,10 @@ def edit_person(table, name, occupation: str = None, state: str = None, age: int
     :param age: age o the person
     :return: table with the added person
     """
-    return
+    return table
+
+
+edit_person(people, 'Sean Holt', None, 'British Columbia', None)
 
 
 def save_data(table):
@@ -71,4 +113,4 @@ def save_data(table):
     :param table: Table to be saved.
     :return: None
     """
-    pd.DataFrame(table).to_csv(r'./data/people.csv', index = False)
+    pd.DataFrame(table).to_csv(r'./data/people.csv', index=False)
